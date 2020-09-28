@@ -2,46 +2,27 @@ require('./config/config')
 
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { response } = require('express');
 
 
 app.use(bodyParser.urlencoded({ extended: false }));            // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());                                     // parse application/json
 
+// Llamar las rutas de usuario
+app.use( require('./routes/usuario') );
 
-// ################### Methods ###########################
-// GET
-app.get('/usuario', (request, response) => {
-    response.json("get Usuario");
-});
-
-// POST
-app.post('/usuario', (request, response) => {
-    let body = request.body
-    if ( body.nombre === undefined ){
-        response.status(400).json({
-            ok: false,
-            msg: "El nombre es necesario."
-        });
-    }else {
-        response.json({
-            persona: body
-        });
-    };
-});
-
-// PUT
-app.put('/usuario/:id', (request, response) => {
-    let id = request.params.id;
-    response.json({
-        id
-    });
-});
-
-// DELETE
-app.delete('/usuario', (request, response) => {
-    response.json("delete Usuario")
-});
+// ################### Data Base #########################
+mongoose.connect('mongodb://localhost:27017/cafe', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
+  }, (error, response) => {
+    if ( error ) throw error;
+    console.log("Base de datos: ONLINE")
+})
 
 // ################### Run server #########################
 app.listen( process.env.PORT , () => {
