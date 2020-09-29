@@ -18,5 +18,6 @@ process.env.SEED = process.env.SEED || 'seed-de-desarrollo';
 
 
 // ================================================================================
-// Puerto
+// Google Client ID
 // ================================================================================
+process.env.CLIENT_ID = process.env.CLIENT_ID || "92614792138-2sj8qreh305f8iek6rkiuuekfab5o4ri.apps.googleusercontent.com";

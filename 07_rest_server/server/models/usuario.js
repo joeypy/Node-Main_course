@@ -41,6 +41,7 @@ let usuarioSchema = new Schema({
     }
 });
 
+// Función para no enviar el campo password en el response
 usuarioSchema.methods.toJSON = function() {
     let user = this;
     let userObject = user.toObject();
