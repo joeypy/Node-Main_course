@@ -4,12 +4,12 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const app = express();
 
+const { verificaToken, verificaAdminRole } = require('../middlewares/autenticacion');
 
 // ################### Routes ###########################
-
-
 // GET
-app.get('/usuario', (request, response) => {
+app.get('/usuario', verificaToken, (request, response) => {
+
     let desde = Number(request.query.desde || 0);
     let limite = Number(request.query.limite || 5);
 
@@ -28,21 +28,21 @@ app.get('/usuario', (request, response) => {
                     })
                 };
 
-                Usuario.count( condicion, (err, conteo) => {
+                Usuario.countDocuments( condicion, (err, conteo) => {
                     response.json({
                         ok: true,
                         usuarios,
                         cantidad: conteo
-                    })
-                })
+                    });
+                });
                 
-            })
+            });
 
 });
 
 
 // POST
-app.post('/usuario', (request, response) => {
+app.post('/usuario', [verificaToken, verificaAdminRole], (request, response) => {
     let body = request.body
 
     let usuario = new Usuario({
@@ -57,21 +57,21 @@ app.post('/usuario', (request, response) => {
             return response.status(400).json({
                 ok: false,
                 err
-            })
-        }
+            });
+        };
         
         // usuarioDB.password = null;                                  // evitar que el password se envíe en la resp
         response.json({
             ok: true,
             usuario: usuarioDB
-        })
+        });
     });
     
 });
 
 
 // PUT
-app.put('/usuario/:id', (request, response) => {
+app.put('/usuario/:id', [verificaToken, verificaAdminRole], (request, response) => {
     let id = request.params.id;
     let body = _.pick(request.body, ['nombre', 'email', 'role', 'estado', 'img']) ;
 
@@ -83,18 +83,18 @@ app.put('/usuario/:id', (request, response) => {
             return response.status(400).json({
                 ok: false,
                 err
-            })
-        }
+            });
+        };
         response.json({
             ok: true,
             usuario: usuarioDB
         });
-    })
+    });
 });
 
 
 // DELETE
-app.delete('/usuario/:id', (request, response) => {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRole], (request, response) => {
     let id = request.params.id;
 
     let borrarUsuario = {
@@ -115,8 +115,8 @@ app.delete('/usuario/:id', (request, response) => {
                 error: {
                     message: "Usuario no encontrado."
                 } 
-            })
-        }
+            });
+        };
         response.json({
             ok: true,
             usuario: usuarioBorrado
